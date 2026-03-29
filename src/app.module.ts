@@ -6,6 +6,8 @@ import { PrismaModule } from './prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { StepModule } from './step/step.module';
 import { OptionModule } from './option/option.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Global()
 @Module({
@@ -15,6 +17,8 @@ import { OptionModule } from './option/option.module';
     ExcerciseModule,
     StepModule,
     OptionModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
