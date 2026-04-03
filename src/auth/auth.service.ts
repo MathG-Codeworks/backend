@@ -14,10 +14,15 @@ export class AuthService {
     async register(registerDto: UsuarioRegisterRequestDto) {
         const existingUser = await this.userService.findOne(registerDto.username);
         if (existingUser) {
-            throw new ConflictException('El usuario ya existe');
+            throw new ConflictException('El nombre de usuario ya existe');
         }
 
-        await this.userService.create(registerDto.username, registerDto.password);
+        const existingEmail = await this.userService.findByUsernameOrEmail(registerDto.email);
+        if (existingEmail) {
+            throw new ConflictException('El email ya está registrado');
+        }
+
+        await this.userService.create(registerDto.username, registerDto.email, registerDto.password);
 
         return {
             message: 'Usuario registrado exitosamente',
@@ -25,7 +30,7 @@ export class AuthService {
     }
 
     async login(loginDto: UsuarioLoginRequestDto): Promise<{ access_token: string }> {
-        const user = await this.userService.findOne(loginDto.username);
+        const user = await this.userService.findByUsernameOrEmail(loginDto.usernameOrEmail);
         if (!user) {
             throw new UnauthorizedException('Credenciales inválidas');
         }

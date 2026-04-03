@@ -6,11 +6,12 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(username: string, password: string) {
+  async create(username: string, email: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
     return this.prismaService.user.create({
       data: {
         username,
+        email,
         password: hashedPassword,
       },
     });
@@ -19,6 +20,14 @@ export class UserService {
   async findOne(username: string) {
     return this.prismaService.user.findUnique({
       where: { username },
+    });
+  }
+
+  async findByUsernameOrEmail(usernameOrEmail: string) {
+    return this.prismaService.user.findFirst({
+      where: {
+        OR: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+      },
     });
   }
 

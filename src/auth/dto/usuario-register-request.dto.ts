@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MinLength, MaxLength, Matches } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, MaxLength, Matches, IsEmail } from 'class-validator';
 
 export class UsuarioRegisterRequestDto {
   @IsString()
@@ -9,6 +9,10 @@ export class UsuarioRegisterRequestDto {
     message: 'El nombre solo puede contener letras, números y guiones bajos',
   })
   username: string;
+
+  @IsEmail({}, { message: 'El email debe ser válido' })
+  @IsNotEmpty({ message: 'El email es obligatorio' })
+  email: string;
 
   @IsString()
   @IsNotEmpty({ message: 'La contraseña es obligatoria' })
