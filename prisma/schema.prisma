@@ -25,6 +25,8 @@ model User {
   roleId        Int @map("role_id")
   role          Role @relation(fields: [roleId], references: [id])
   sessions      Session[]
+  matches       UserMatch[]
+  rankings      Ranking[]
 
   @@map("users")
 }
@@ -45,6 +47,8 @@ model Category {
   name          String
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
+  minigames     Minigame[]
+  exercises     Exercise[]
 
   @@map("categories")
 }
@@ -69,12 +73,27 @@ model Session {
   @@map("sessions")
 }
 
+model Minigame {
+  id            Int @id @default(autoincrement())
+  name          String
+  description   String
+  categoryId    Int @map("category_id")
+  category      Category @relation(fields: [categoryId], references: [id])
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  rounds        Round[]
+
+  @@map("minigames")
+}
+
 model Exercise {
   id          Int      @id @default(autoincrement())
   operation   String
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  categoryId  Int @map("category_id")
+  category    Category @relation(fields: [categoryId], references: [id])
   steps       Step[]
 
   @@map("exercises")
@@ -104,4 +123,49 @@ model Option {
   @@map("options")
 }
 
+model Match {
+  id            String @id
+  code          String
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  users         UserMatch[]
+  rounds        Round[]
 
+  @@map("matches")
+}
+
+model UserMatch {
+  userId        Int @map("user_id")
+  user          User @relation(fields: [userId], references: [id])
+  matchId       String @map("match_id")
+  match         Match @relation(fields: [matchId], references: [id])
+
+  @@id([userId, matchId])
+  @@map("users_matches")
+}
+
+model Round {
+  id            Int       @id @default(autoincrement())
+  matchId       String    @map("match_id")
+  match         Match     @relation(fields: [matchId], references: [id])
+  minigameId    Int       @map("minigame_id")
+  minigame      Minigame  @relation(fields: [minigameId], references: [id])
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  rankings      Ranking[]
+
+  @@map("rounds")
+}
+
+model Ranking {
+  id            Int       @id @default(autoincrement())
+  score         Float     
+  accuracy      Float
+  position      Int
+  roundId       Int       @map("round_id")
+  round         Round     @relation(fields: [roundId], references: [id])    
+  userId        Int       @map("user_id")    
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@map("rankings")
+}
