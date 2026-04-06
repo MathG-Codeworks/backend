@@ -13,11 +13,27 @@ export class MatchService {
 	) {}
 
 	async create(createMatchDto: CreateMatchDto): Promise<ResponseMatchDto> {
+		const minigames = await this.prismaService.minigame.findMany();
+
 		const match = await this.prismaService.match.create({
 			data: {
 				id: createMatchDto.id,
 				code: createMatchDto.code,
-			}
+				rounds: {
+					createMany: {
+						data: minigames.map(minigame => ({
+							minigameId: minigame.id,
+						})),
+					},
+				},
+			},
+			include: {
+				rounds: {
+					include: {
+						minigame: true,
+					},
+				},
+			},
 		});
 
 		return plainToInstance(ResponseMatchDto, match);

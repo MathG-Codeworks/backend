@@ -50,7 +50,6 @@ export class SessionController {
 		return this.sessionService.updateEndTime(user.id, +id);
 	}
 
-
 	// @Delete(':id')
 	// remove(@Param('id') id: string) {
 	// 	return this.sessionService.remove(+id);

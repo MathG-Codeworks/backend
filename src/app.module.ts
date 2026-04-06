@@ -10,6 +10,10 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MatchModule } from './match/match.module';
 import { SessionModule } from './session/session.module';
+import { RoundModule } from './round/round.module';
+import { MinigameModule } from './minigame/minigame.module';
+import { RankingModule } from './ranking/ranking.module';
+import { AttempModule } from './attemp/attemp.module';
 
 @Global()
 @Module({
@@ -23,6 +27,10 @@ import { SessionModule } from './session/session.module';
     UserModule,
     MatchModule,
     SessionModule,
+    RoundModule,
+    MinigameModule,
+    RankingModule,
+    AttempModule,
   ],
   controllers: [AppController],
   providers: [AppService],
