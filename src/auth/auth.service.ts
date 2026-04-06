@@ -1,13 +1,14 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
-import { Prisma, User } from 'generated/prisma/client';
+import { User } from 'generated/prisma/client';
 import { UserService } from 'src/user/user.service';
 import { UsuarioRegisterRequestDto } from './dto/usuario-register-request.dto';
 import { UsuarioLoginRequestDto } from './dto/usuario-login-request.dto';
 import { RefreshTokenDto } from './dto/refresh-token-update.dto';
 import { TokenResponseDto } from './dto/token-response.dto';
 import { PrismaService } from 'src/prisma.service';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -50,13 +51,12 @@ export class AuthService {
             throw new UnauthorizedException('Credenciales inválidas');
         }
 
-        const newTokens = await this.generateRefreshToken(user);
-        return newTokens;
+        return await this.generateRefreshToken(user, loginDto.isFromGame, loginDto.platform, loginDto.device);
     }
 
     async refresh(refreshTokenDto: RefreshTokenDto): Promise<TokenResponseDto> {
         const refreshToken = await this.prismaService.refreshToken.findFirst({
-            where: { 
+            where: {
                 refreshToken: refreshTokenDto.refreshToken,
                 accessToken: refreshTokenDto.accessToken,
                 expiresOn: { gt: new Date() }
@@ -65,24 +65,32 @@ export class AuthService {
         });
 
         if (!refreshToken) {
-            throw new UnauthorizedException('Token de refresco inválido o expirado');
+            throw new UnauthorizedException(['Token de refresco inválido o expirado']);
         }
 
-        const newTokens = await this.generateRefreshToken(refreshToken.user);
-
-        await this.prismaService.refreshToken.delete({
-            where: { id: refreshToken.id }
+        const updatedRefresToken = await this.prismaService.refreshToken.update({
+            where: { id: refreshToken.id },
+            data: {
+                accessToken: await this.jwtService.signAsync({ sub: refreshToken.user.id, username: refreshToken.user.username }),
+            }
         });
 
-        return newTokens;
+        if (refreshTokenDto.isFromGame) {
+            await this.prismaService.session.update({
+                where: { refreshTokenId: refreshToken.id },
+                data: { end: new Date() }
+            });
+        }
+
+        return plainToInstance(TokenResponseDto, updatedRefresToken);
     }
 
-    async generateRefreshToken(user: User): Promise<TokenResponseDto> {
+    async generateRefreshToken(user: User, isFromGame?: boolean, platform?: string, device?: string): Promise<TokenResponseDto> {
         const payload = { sub: user.id, username: user.username };
         const newAccessToken = await this.jwtService.signAsync(payload);
         const newRefreshToken = randomBytes(32).toString('hex');
 
-        await this.prismaService.refreshToken.create({
+        const token = await this.prismaService.refreshToken.create({
             data: {
                 refreshToken: newRefreshToken,
                 accessToken: newAccessToken,
@@ -91,10 +99,18 @@ export class AuthService {
             },
         });
 
-        return {
-            refresh_token: newRefreshToken,
-            access_token: newAccessToken,
-        };
+        if (isFromGame) {
+            await this.prismaService.session.create({
+                data: {
+                    userId: user.id,
+                    refreshTokenId: token.id,
+                    platform: platform || 'Desconocido',
+                    device: device || 'Desconocido',
+                }
+            });
+        }
+
+        return plainToInstance(TokenResponseDto, token);
     }
 
 }

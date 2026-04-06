@@ -38,6 +38,7 @@ model RefreshToken {
   userId        Int @map("user_id")
   user          User @relation(fields: [userId], references: [id])
   expiresOn     DateTime @map("expires_on")
+  session       Session?
 
   @@map("refresh_tokens")
 }
@@ -62,13 +63,15 @@ model Role {
 }
 
 model Session {
-  id            Int @id @default(autoincrement())
-  userId        Int @map("user_id")
-  user          User @relation(fields: [userId], references: [id])
-  start         DateTime @default(now())
-  end           DateTime @default(now())
-  platform      String
-  device        String
+  id                Int @id @default(autoincrement())
+  userId            Int @map("user_id")
+  user              User @relation(fields: [userId], references: [id])
+  start             DateTime @default(now())
+  end               DateTime @default(now())
+  platform          String
+  device            String
+  refreshTokenId    Int @unique @map("refresh_token_id")
+  refreshToken      RefreshToken @relation(fields: [refreshTokenId], references: [id])
 
   @@map("sessions")
 }

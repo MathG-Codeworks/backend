@@ -1,11 +1,15 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsOptional } from 'class-validator';
 
 export class RefreshTokenDto {
     @IsString()
     @IsNotEmpty({ message: 'El token de refresco es obligatorio' })
-    refreshToken: string;
+    refreshToken!: string;
 
     @IsString()
     @IsNotEmpty({ message: 'El token de acceso es obligatorio' })
-    accessToken: string;
+    accessToken!: string;
+
+    @IsBoolean()
+    @IsOptional()
+    isFromGame?: boolean;
 }

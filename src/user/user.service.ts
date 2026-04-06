@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { Role } from 'src/common/enums/role.enum';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -7,12 +8,24 @@ export class UserService {
 	constructor(private readonly prismaService: PrismaService) { }
 
 	async create(username: string, email: string, password: string) {
+		const studentRole = await this.prismaService.role.findFirst({
+			where: { name: Role.STUDENT },
+		});
+
+		if (!studentRole) {
+			throw new BadRequestException([
+				'Comunicate con el administrador: no se encontró el rol de estudiante'
+			]);
+		}
+
 		const hashedPassword = await bcrypt.hash(password, 10);
+
 		return this.prismaService.user.create({
 			data: {
 				username,
 				email,
 				password: hashedPassword,
+				roleId: studentRole.id,
 			},
 		});
 	}
