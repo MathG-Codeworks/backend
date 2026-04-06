@@ -9,7 +9,6 @@ import { OptionModule } from './option/option.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MatchModule } from './match/match.module';
-import { IsMatchIdUniqueConstraint } from './match/validator/unique.validator';
 import { SessionModule } from './session/session.module';
 
 @Global()

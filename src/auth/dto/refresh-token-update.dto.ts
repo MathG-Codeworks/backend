@@ -8,8 +8,4 @@ export class RefreshTokenDto {
     @IsString()
     @IsNotEmpty({ message: 'El token de acceso es obligatorio' })
     accessToken!: string;
-
-    @IsBoolean()
-    @IsOptional()
-    isFromGame?: boolean;
 }

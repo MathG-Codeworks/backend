@@ -8,16 +8,4 @@ export class UsuarioLoginRequestDto {
 	@IsString()
 	@IsNotEmpty({ message: 'La contraseña es obligatoria' })
 	password!: string;
-
-	@IsBoolean()
-	@IsOptional()
-	isFromGame?: boolean;
-
-	@IsString()
-	@IsOptional()
-	platform?: string;
-
-	@IsString()
-	@IsOptional()
-	device?: string;
 }

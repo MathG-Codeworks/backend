@@ -39,7 +39,10 @@ export class UserService {
 	async findByUsernameOrEmail(usernameOrEmail: string) {
 		return this.prismaService.user.findFirst({
 			where: {
-				OR: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+				OR: [
+					{ username: { mode: 'insensitive', equals: usernameOrEmail } },
+					{ email: { mode: 'insensitive', equals: usernameOrEmail } },
+				],
 			},
 		});
 	}

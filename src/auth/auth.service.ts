@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
-import { User } from 'generated/prisma/client';
+import { Prisma, User } from 'generated/prisma/client';
 import { UserService } from 'src/user/user.service';
 import { UsuarioRegisterRequestDto } from './dto/usuario-register-request.dto';
 import { UsuarioLoginRequestDto } from './dto/usuario-login-request.dto';
@@ -9,6 +9,7 @@ import { RefreshTokenDto } from './dto/refresh-token-update.dto';
 import { TokenResponseDto } from './dto/token-response.dto';
 import { PrismaService } from 'src/prisma.service';
 import { plainToInstance } from 'class-transformer';
+import { ResponseUserDto } from './dto/response-user-dto';
 
 @Injectable()
 export class AuthService {
@@ -18,22 +19,15 @@ export class AuthService {
         private readonly prismaService: PrismaService
     ) {}
 
-    async register(registerDto: UsuarioRegisterRequestDto) {
-        const existingUser = await this.userService.findOne(registerDto.username);
-        if (existingUser) {
-            throw new ConflictException('El nombre de usuario ya existe');
-        }
-
+    async register(registerDto: UsuarioRegisterRequestDto): Promise<ResponseUserDto> {
         const existingEmail = await this.userService.findByUsernameOrEmail(registerDto.email);
         if (existingEmail) {
-            throw new ConflictException('El email ya está registrado');
+            throw new ConflictException('El email o nombre de usuario ya está registrado');
         }
 
-        await this.userService.create(registerDto.username, registerDto.email, registerDto.password);
+        const user = await this.userService.create(registerDto.username, registerDto.email, registerDto.password);
 
-        return {
-            message: 'Usuario registrado exitosamente',
-        };
+        return plainToInstance(ResponseUserDto, user);
     }
 
     async login(loginDto: UsuarioLoginRequestDto): Promise<TokenResponseDto> {
@@ -51,12 +45,13 @@ export class AuthService {
             throw new UnauthorizedException('Credenciales inválidas');
         }
 
-        return await this.generateRefreshToken(user, loginDto.isFromGame, loginDto.platform, loginDto.device);
+        const newTokens = await this.generateRefreshToken(user);
+        return newTokens;
     }
 
     async refresh(refreshTokenDto: RefreshTokenDto): Promise<TokenResponseDto> {
         const refreshToken = await this.prismaService.refreshToken.findFirst({
-            where: {
+            where: { 
                 refreshToken: refreshTokenDto.refreshToken,
                 accessToken: refreshTokenDto.accessToken,
                 expiresOn: { gt: new Date() }
@@ -65,27 +60,19 @@ export class AuthService {
         });
 
         if (!refreshToken) {
-            throw new UnauthorizedException(['Token de refresco inválido o expirado']);
+            throw new UnauthorizedException('Token de refresco inválido o expirado');
         }
 
-        const updatedRefresToken = await this.prismaService.refreshToken.update({
-            where: { id: refreshToken.id },
-            data: {
-                accessToken: await this.jwtService.signAsync({ sub: refreshToken.user.id, username: refreshToken.user.username }),
-            }
+        const newTokens = await this.generateRefreshToken(refreshToken.user);
+
+        await this.prismaService.refreshToken.delete({
+            where: { id: refreshToken.id }
         });
 
-        if (refreshTokenDto.isFromGame) {
-            await this.prismaService.session.update({
-                where: { refreshTokenId: refreshToken.id },
-                data: { end: new Date() }
-            });
-        }
-
-        return plainToInstance(TokenResponseDto, updatedRefresToken);
+        return newTokens;
     }
 
-    async generateRefreshToken(user: User, isFromGame?: boolean, platform?: string, device?: string): Promise<TokenResponseDto> {
+    async generateRefreshToken(user: User): Promise<TokenResponseDto> {
         const payload = { sub: user.id, username: user.username };
         const newAccessToken = await this.jwtService.signAsync(payload);
         const newRefreshToken = randomBytes(32).toString('hex');
@@ -99,19 +86,7 @@ export class AuthService {
             },
         });
 
-        if (isFromGame) {
-            await this.prismaService.session.create({
-                data: {
-                    userId: user.id,
-                    refreshTokenId: token.id,
-                    platform: platform || 'Desconocido',
-                    device: device || 'Desconocido',
-                }
-            });
-        }
-
         return plainToInstance(TokenResponseDto, token);
     }
 
 }
-
