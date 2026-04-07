@@ -4,9 +4,10 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { UsuarioRegisterRequestDto } from './dto/usuario-register-request.dto';
 import { UsuarioLoginRequestDto } from './dto/usuario-login-request.dto';
-import { UsuarioResponseDto } from './dto/usuario-response.dto';
 import { RefreshTokenDto } from './dto/refresh-token-update.dto';
 import { TokenResponseDto } from './dto/token-response.dto';
+import { ResponseUserDto } from './dto/response-user-dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +15,7 @@ export class AuthController {
 
     @HttpCode(HttpStatus.CREATED)
     @Post('register')
-    register(@Body() registerDto: UsuarioRegisterRequestDto) {
+    register(@Body() registerDto: UsuarioRegisterRequestDto): Promise<ResponseUserDto> {
         return this.authService.register(registerDto);
     }
 
@@ -32,13 +33,8 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Get('profile')
-    getProfile(@Request() req: ExpressRequest): UsuarioResponseDto {
+    getProfile(@Request() req: ExpressRequest): ResponseUserDto {
         const user = (req as any).user;
-        return {
-            id: user.id,
-            username: user.username,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        } as UsuarioResponseDto;
+        return plainToInstance(ResponseUserDto, user);
     }
 }
