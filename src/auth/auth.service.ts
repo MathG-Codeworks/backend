@@ -10,6 +10,7 @@ import { TokenResponseDto } from './dto/token-response.dto';
 import { PrismaService } from 'src/prisma.service';
 import { plainToInstance } from 'class-transformer';
 import { ResponseUserDto } from './dto/response-user-dto';
+import { PatchUserDto } from './dto/patch-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -87,6 +88,60 @@ export class AuthService {
         });
 
         return plainToInstance(TokenResponseDto, token);
+    }
+
+    async patch(userId: number, patchUserDto: PatchUserDto): Promise<ResponseUserDto> {
+        const currentUser = await this.userService.findById(userId);
+        if (!currentUser) {
+            throw new UnauthorizedException(['Usuario no encontrado']);
+        }
+
+        const updateData: Partial<Prisma.UserUpdateInput> = {};
+
+        if (patchUserDto.email !== undefined && patchUserDto.email !== null && patchUserDto.email !== '') {
+            if (patchUserDto.email.toLowerCase() !== currentUser.email.toLowerCase()) {
+                const existingEmail = await this.prismaService.user.findFirst({
+                    where: {
+                        email: { mode: 'insensitive', equals: patchUserDto.email },
+                        NOT: { id: userId }
+                    }
+                });
+
+                if (existingEmail) {
+                    throw new ConflictException(['El email ya está registrado']);
+                }
+
+                updateData.email = patchUserDto.email;
+            }
+        }
+
+        if (patchUserDto.username !== undefined && patchUserDto.username !== null && patchUserDto.username !== '') {
+            if (patchUserDto.username.toLowerCase() !== currentUser.username.toLowerCase()) {
+                const existingUsername = await this.prismaService.user.findFirst({
+                    where: {
+                        username: { mode: 'insensitive', equals: patchUserDto.username },
+                        NOT: { id: userId }
+                    }
+                });
+
+                if (existingUsername) {
+                    throw new ConflictException(['El nombre de usuario ya está registrado']);
+                }
+
+                updateData.username = patchUserDto.username;
+            }
+        }
+
+        if (Object.keys(updateData).length === 0) {
+            return plainToInstance(ResponseUserDto, currentUser);
+        }
+
+        const updatedUser = await this.prismaService.user.update({
+            where: { id: userId },
+            data: updateData
+        });
+
+        return plainToInstance(ResponseUserDto, updatedUser);
     }
 
 }
