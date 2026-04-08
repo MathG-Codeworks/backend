@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty } from 'class-validator';
 
-export class RefreshTokenDto {
+export class LogoutUserDto {
     @IsString()
     @IsNotEmpty({ message: 'El token de refresco es obligatorio' })
     refreshToken!: string;

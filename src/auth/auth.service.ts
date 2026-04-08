@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { Prisma, User } from 'generated/prisma/client';
 import { UserService } from 'src/user/user.service';
 import { UsuarioRegisterRequestDto } from './dto/usuario-register-request.dto';
@@ -11,6 +12,8 @@ import { PrismaService } from 'src/prisma.service';
 import { plainToInstance } from 'class-transformer';
 import { ResponseUserDto } from './dto/response-user-dto';
 import { PatchUserDto } from './dto/patch-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { LogoutUserDto } from './dto/logout-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -140,6 +143,61 @@ export class AuthService {
             where: { id: userId },
             data: updateData
         });
+
+        return plainToInstance(ResponseUserDto, updatedUser);
+    }
+
+    async logout(userId: number, logoutUserDto: LogoutUserDto): Promise<void> {
+        await this.prismaService.refreshToken.deleteMany({
+            where: { 
+                userId: userId,
+                refreshToken: logoutUserDto.refreshToken,
+                accessToken: logoutUserDto.accessToken 
+            }
+        });
+    }
+
+    async logoutAll(userId: number): Promise<void> {
+        await this.prismaService.refreshToken.deleteMany({
+            where: { userId }
+        });
+    }
+
+    async changePassword(userId: number, changePasswordDto: ChangePasswordDto): Promise<ResponseUserDto> {
+        const user = await this.userService.findById(userId);
+        if (!user) {
+            throw new UnauthorizedException(['Usuario no encontrado']);
+        }
+
+        const isCurrentPasswordValid = await this.userService.validatePassword(
+            changePasswordDto.currentPassword,
+            user.password,
+        );
+
+        if (!isCurrentPasswordValid) {
+            throw new UnauthorizedException(['La contraseña actual es incorrecta']);
+        }
+
+        const isNewPasswordSameAsOld = await this.userService.validatePassword(
+            changePasswordDto.newPassword,
+            user.password,
+        );
+
+        if (isNewPasswordSameAsOld) {
+            throw new ConflictException(['La nueva contraseña debe ser diferente de la actual']);
+        }
+
+        if (changePasswordDto.newPassword !== changePasswordDto.confirmNewPassword) {
+            throw new ConflictException(['La confirmación de contraseña no coincide']);
+        }
+
+        const hashedPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
+        const updatedUser = await this.prismaService.user.update({
+            where: { id: userId },
+            data: { password: hashedPassword }
+        });
+
+        this.logoutAll(userId);
 
         return plainToInstance(ResponseUserDto, updatedUser);
     }

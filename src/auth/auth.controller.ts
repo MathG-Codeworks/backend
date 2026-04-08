@@ -9,6 +9,8 @@ import { TokenResponseDto } from './dto/token-response.dto';
 import { ResponseUserDto } from './dto/response-user-dto';
 import { plainToInstance } from 'class-transformer';
 import { PatchUserDto } from './dto/patch-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { LogoutUserDto } from './dto/logout-user.dto';
 
 interface AuthenticatedUser {
   	id: number;
@@ -52,5 +54,32 @@ export class AuthController {
     ) : Promise<ResponseUserDto> {
         const user = (req as any).user as AuthenticatedUser;
         return this.authService.patch(user.id, patchUserDto);
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('logout')
+    logout(
+        @Request() req: ExpressRequest,
+        @Body() logoutUserDto: LogoutUserDto
+    ): Promise<void> {
+        const user = (req as any).user as AuthenticatedUser;
+        return this.authService.logout(user.id, logoutUserDto);
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('logout-all')
+    logoutAll(@Request() req: ExpressRequest): Promise<void> {
+        const user = (req as any).user as AuthenticatedUser;
+        return this.authService.logoutAll(user.id);
+    }
+
+    @UseGuards(AuthGuard)
+    @Patch('change-password')
+    changePassword(
+        @Request() req: ExpressRequest,
+        @Body() changePasswordDto: ChangePasswordDto
+    ): Promise<ResponseUserDto> {
+        const user = (req as any).user as AuthenticatedUser;
+        return this.authService.changePassword(user.id, changePasswordDto);
     }
 }
