@@ -45,7 +45,7 @@ export class AuthController {
     }
 
     @UseGuards(AuthGuard)
-    @Patch()
+    @Patch('profile')
     patch(
         @Request() req: ExpressRequest,
         @Body() patchUserDto: PatchUserDto
