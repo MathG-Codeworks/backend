@@ -16,6 +16,13 @@ export class SessionController {
 	constructor(private readonly sessionService: SessionService) { }
 
 	@UseGuards(AuthGuard)
+	@Get('user/total-time')
+	getTotalTime(@Request() req: ExpressRequest) : Promise<number> {
+		const user = (req as any).user as AuthenticatedUser;
+		return this.sessionService.getTotalTime(user.id);
+	}
+
+	@UseGuards(AuthGuard)
 	@Post()
 	create(@Request() req: ExpressRequest, @Body() createSessionDto: CreateSessionDto) : Promise<ResponseSessionDto> {
 		const user = (req as any).user as AuthenticatedUser;

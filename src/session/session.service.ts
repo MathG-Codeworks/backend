@@ -12,6 +12,23 @@ export class SessionService {
 		private readonly prismaService: PrismaService,
 	) { }
 
+	async getTotalTime(userId: number): Promise<number> {
+		const sessions = await this.prismaService.session.findMany({
+			where: { userId: userId },
+		});
+
+		const totalTime = sessions.reduce((total, session) => {
+			if (session.end) {
+				const start = session.start.getTime();
+				const end = session.end.getTime();
+				return total + (end - start);
+			}
+			return total;
+		}, 0);
+
+		return totalTime;
+	}
+
 	async create(userId: number, createSessionDto: CreateSessionDto) : Promise<ResponseSessionDto> {
 		const session = await this.prismaService.session.create({
 			data: {

@@ -9,15 +9,31 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.attemp.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 	await prisma.option.deleteMany();
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 	await prisma.step.deleteMany();
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 	await prisma.exercise.deleteMany();
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-	await prisma.category.deleteMany();
+	await prisma.session.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.ranking.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.refreshToken.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.user.deleteMany();
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 	await prisma.role.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.round.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.match.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.minigame.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.category.deleteMany();
 
 	// Crear roles
 	const studentRole = await prisma.role.create({
@@ -406,6 +422,217 @@ async function main() {
 		},
 	});
 	console.log('Exercise created:', exercise10);
+
+	// Crear usuario de prueba
+	const testUser = await prisma.user.create({
+		data: {
+			username: 'testuser',
+			email: 'test@example.com',
+			password: '$2b$10$hashedpassword123456', // Esto es un placeholder
+			roleId: studentRole.id,
+		},
+	});
+	console.log('Test user created:', testUser);
+
+	// Crear sesiones para el usuario - semana con hueco el sábado
+	// Calcular fechas relativas: viernes, sábado (hueco), domingo
+	
+	const today = new Date();
+	const dayOfWeek = today.getDay(); // 0 = domingo, 5 = viernes, 6 = sábado
+	
+	// Calcular viernes de la semana pasada
+	let friday = new Date(today);
+	friday.setDate(friday.getDate() - (dayOfWeek + 2 % 7)); // Retroceso a viernes
+	if (dayOfWeek <= 5) friday.setDate(friday.getDate() - 7); // Si aún no es viernes esta semana, ir al viernes pasado
+	
+	// Calcular sábado y domingo
+	const saturday = new Date(friday);
+	saturday.setDate(saturday.getDate() + 1);
+	
+	const sunday = new Date(friday);
+	sunday.setDate(sunday.getDate() + 2);
+	
+	// Sesión viernes
+	const sessionFriday1 = await prisma.session.create({
+		data: {
+			userId: testUser.id,
+			start: new Date(friday.getTime() + 8 * 3600000), // 08:00 AM
+			end: new Date(friday.getTime() + 10 * 3600000), // 10:00 AM
+			platform: 'Web',
+			device: 'Chrome on Windows',
+		},
+	});
+	console.log('Session Friday 1 created:', sessionFriday1);
+
+	const sessionFriday2 = await prisma.session.create({
+		data: {
+			userId: testUser.id,
+			start: new Date(friday.getTime() + 14 * 3600000), // 14:00 (2:00 PM)
+			end: new Date(friday.getTime() + 16 * 3600000), // 16:00 (4:00 PM)
+			platform: 'Mobile',
+			device: 'Safari on iOS',
+		},
+	});
+	console.log('Session Friday 2 created:', sessionFriday2);
+
+	const sessionFriday3 = await prisma.session.create({
+		data: {
+			userId: testUser.id,
+			start: new Date(friday.getTime() + 20 * 3600000), // 20:00 (8:00 PM)
+			end: new Date(friday.getTime() + 21.5 * 3600000), // 21:30 (9:30 PM)
+			platform: 'Mobile',
+			device: 'Chrome on Android',
+		},
+	});
+	console.log('Session Friday 3 created:', sessionFriday3);
+
+	// NO hay sesión el sábado (hueco)
+	console.log('Saturday - No sessions (gap day)');
+
+	// Sesiones domingo
+	const sessionSunday1 = await prisma.session.create({
+		data: {
+			userId: testUser.id,
+			start: new Date(sunday.getTime() + 9 * 3600000), // 09:00 AM
+			end: new Date(sunday.getTime() + 11 * 3600000), // 11:00 AM
+			platform: 'Web',
+			device: 'Firefox on Windows',
+		},
+	});
+	console.log('Session Sunday 1 created:', sessionSunday1);
+
+	const sessionSunday2 = await prisma.session.create({
+		data: {
+			userId: testUser.id,
+			start: new Date(sunday.getTime() + 15 * 3600000), // 15:00 (3:00 PM)
+			end: new Date(sunday.getTime() + 17 * 3600000), // 17:00 (5:00 PM)
+			platform: 'Web',
+			device: 'Edge on Windows',
+		},
+	});
+	console.log('Session Sunday 2 created:', sessionSunday2);
+
+	// Variables para attempts y rounds
+	const twoDaysAgo = new Date(friday);
+	const yesterday = new Date(saturday);
+	// today se mantendrá como today para today
+
+	// Crear match para poder crear rounds
+	const match = await prisma.match.create({
+		data: {
+			id: 'match_' + Math.random().toString(36).substring(7),
+			code: 'TEST' + Math.floor(Math.random() * 10000),
+		},
+	});
+	console.log('Match created:', match);
+
+	// Agregar usuario al match
+	await prisma.userMatch.create({
+		data: {
+			userId: testUser.id,
+			matchId: match.id,
+		},
+	});
+	console.log('User added to match');
+
+	// Crear attempts variados y aleatorios con diferentes fechas para probar agrupamiento por día
+	const exercises = [excercise, exercise2, exercise3, exercise4, exercise5, exercise6, exercise7, exercise8, exercise9, exercise10];
+	
+	// Función auxiliar para crear attemps con fecha específica
+	const createAttempsBatch = async (baseDate: Date, count: number, dayLabel: string) => {
+		for (let i = 0; i < count; i++) {
+			const exercise = exercises[Math.floor(Math.random() * exercises.length)];
+			const steps = await prisma.step.findMany({
+				where: { exerciseId: exercise.id },
+				include: { options: true },
+			});
+
+			if (steps.length > 0) {
+				const step = steps[Math.floor(Math.random() * steps.length)];
+				const option = step.options[Math.floor(Math.random() * step.options.length)];
+				const isCorrect = Math.random() > 0.3; // 70% correcta, 30% incorrecta
+				
+				await prisma.attemp.create({
+					data: {
+						isCorrect,
+						number: i + 1,
+						userId: testUser.id,
+						exerciseId: exercise.id,
+						optionId: option.id,
+						createdAt: new Date(baseDate.getTime() + i * Math.random() * 3600000),
+					},
+				});
+			}
+		}
+		console.log(`${count} attempts created for ${dayLabel}`);
+	};
+
+	// Crear attempts para cada día
+	await createAttempsBatch(twoDaysAgo, 12, '2 days ago');
+	await createAttempsBatch(yesterday, 15, 'yesterday');
+	await createAttempsBatch(today, 18, 'today');
+
+	// Crear rounds para el usuario
+	const round1 = await prisma.round.create({
+		data: {
+			matchId: match.id,
+			minigameId: minigame.id,
+			createdAt: twoDaysAgo,
+		},
+	});
+	console.log('Round 1 created:', round1);
+
+	const round2 = await prisma.round.create({
+		data: {
+			matchId: match.id,
+			minigameId: minigame.id,
+			createdAt: yesterday,
+		},
+	});
+	console.log('Round 2 created:', round2);
+
+	const round3 = await prisma.round.create({
+		data: {
+			matchId: match.id,
+			minigameId: minigame.id,
+			createdAt: today,
+		},
+	});
+	console.log('Round 3 created:', round3);
+
+	// Crear rankings para cada round
+	const ranking1 = await prisma.ranking.create({
+		data: {
+			userId: testUser.id,
+			roundId: round1.id,
+			score: 85.5,
+			accuracy: 85,
+			position: 3,
+		},
+	});
+	console.log('Ranking 1 created:', ranking1);
+
+	const ranking2 = await prisma.ranking.create({
+		data: {
+			userId: testUser.id,
+			roundId: round2.id,
+			score: 92.3,
+			accuracy: 92,
+			position: 1,
+		},
+	});
+	console.log('Ranking 2 created:', ranking2);
+
+	const ranking3 = await prisma.ranking.create({
+		data: {
+			userId: testUser.id,
+			roundId: round3.id,
+			score: 78.9,
+			accuracy: 78,
+			position: 1,
+		},
+	});
+	console.log('Ranking 3 created:', ranking3);
 }
 
 main()
