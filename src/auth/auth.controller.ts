@@ -58,6 +58,7 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Post('logout')
+    @HttpCode(HttpStatus.OK)
     logout(
         @Request() req: ExpressRequest,
         @Body() logoutUserDto: LogoutUserDto
@@ -68,6 +69,7 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Post('logout-all')
+    @HttpCode(HttpStatus.OK)
     logoutAll(@Request() req: ExpressRequest): Promise<void> {
         const user = (req as any).user as AuthenticatedUser;
         return this.authService.logoutAll(user.id);
