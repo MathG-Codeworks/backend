@@ -176,7 +176,6 @@ model Ranking {
 model Attemp {
   id            Int       @id @default(autoincrement())
   isCorrect     Boolean   @map("is_correct")
-  number        Int
   exerciseId    Int       @map("exercise_id")
   exercise      Exercise  @relation(fields: [exerciseId], references: [id])
   optionId      Int       @map("option_id")

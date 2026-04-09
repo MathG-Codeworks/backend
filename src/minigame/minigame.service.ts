@@ -3,6 +3,7 @@ import { CreateMinigameDto } from './dto/create-minigame.dto';
 import { UpdateMinigameDto } from './dto/update-minigame.dto';
 import { PrismaService } from 'src/prisma.service';
 import { ResponseUserMinigamesPerformanceDto } from './dto/response-user-minigames-performance.dto';
+import { plainToInstance } from 'class-transformer';
 
 interface MinigameStat {
 	id: number;
@@ -90,23 +91,20 @@ export class MinigameService {
 			const avgAccuracy = stats.accuracies.reduce((a, b) => a + b, 0) / stats.accuracies.length;
 			const avgPosition = stats.positions.reduce((a, b) => a + b, 0) / stats.positions.length;
 
-			kpiList.push({
-				id: stats.id,
-				name: stats.name,
-				description: stats.description,
-				category: stats.category,
-				rounds: stats.scores.length,
-				score: Math.round(avgScore * 100) / 100,
-				accuracy: Math.round(avgAccuracy * 100) / 100,
-				position: Math.round(avgPosition * 100) / 100,
-			});
+			kpiList.push(
+				plainToInstance(ResponseUserMinigamesPerformanceDto, {
+					id: stats.id,
+					name: stats.name,
+					description: stats.description,
+					category: stats.category,
+					rounds: stats.scores.length,
+					score: Math.round(avgScore * 100) / 100,
+					accuracy: Math.round(avgAccuracy * 100) / 100,
+					position: Math.round(avgPosition) ,
+				})
+			);
 		});
 
-		return kpiList.sort((a, b) => {
-			if (b.accuracy !== a.accuracy) {
-				return b.accuracy - a.accuracy;
-			}
-			return a.position - b.position;
-		});
+		return kpiList;
 	}
 }

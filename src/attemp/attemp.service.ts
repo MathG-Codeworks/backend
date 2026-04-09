@@ -27,7 +27,10 @@ export class AttempService {
 		const statsByDay = new Map<string, { correct: number; incorrect: number }>();
 
 		attemps.forEach((attemp) => {
-			const date = attemp.createdAt.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+			const date = attemp.createdAt.toLocaleDateString('en-CA', {
+				timeZone: 'America/Bogota'
+			});
+
 			if (!statsByDay.has(date)) {
 				statsByDay.set(date, { correct: 0, incorrect: 0 });
 			}
@@ -64,9 +67,9 @@ export class AttempService {
 		const correctAttemps = attemps.filter(attemp => attemp.isCorrect).length;
 		const incorrectAttemps = attemps.length - correctAttemps;
 		const precision = attemps.length === 0 ? 0 : (correctAttemps / attemps.length) * 100;
-
+		
 		return plainToInstance(ResponseUserAttempsPresitionDto, {
-			total: attemps.length,
+			total: correctAttemps + incorrectAttemps,
 			correct: correctAttemps,
 			incorrect: incorrectAttemps,
 			presition: Math.round(precision * 100) / 100,
@@ -74,29 +77,14 @@ export class AttempService {
 	}
 
 	async create(userId: number, createAttempDto: CreateAttempDto): Promise<ResponseAttempDto> {
-		const existingAttemp = await this.prismaService.attemp.findFirst({
-			where: {
+		const attemp = await this.prismaService.attemp.create({
+			data: {
 				userId: userId,
-				optionId: createAttempDto.optionId,
+				isCorrect: createAttempDto.isCorrect,
+				exerciseId: createAttempDto.exerciseId,
+				optionId: createAttempDto.optionId
 			},
 		});
-
-		const attemp = existingAttemp
-			? await this.prismaService.attemp.update({
-				where: { id: existingAttemp.id },
-				data: {
-					number: existingAttemp.number + 1,
-				}
-			})
-			: await this.prismaService.attemp.create({
-				data: {
-					number: 1,
-					userId: userId,
-					isCorrect: createAttempDto.isCorrect,
-					exerciseId: createAttempDto.exerciseId,
-					optionId: createAttempDto.optionId
-				},
-			});
 
 		return plainToInstance(ResponseAttempDto, attemp);
 	}

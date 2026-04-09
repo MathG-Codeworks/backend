@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from 'generated/prisma/client';
 import { Role } from '../src/common/enums/role.enum';
+import * as bcrypt from 'bcrypt';
 
 const connectionString = `${process.env.DATABASE_URL}`;
 const adapter = new PrismaPg({ connectionString: connectionString });
@@ -22,6 +23,8 @@ async function main() {
 	await prisma.ranking.deleteMany();
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 	await prisma.refreshToken.deleteMany();
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+	await prisma.userMatch.deleteMany();
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 	await prisma.user.deleteMany();
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -428,7 +431,7 @@ async function main() {
 		data: {
 			username: 'testuser',
 			email: 'test@example.com',
-			password: '$2b$10$hashedpassword123456', // Esto es un placeholder
+			password: await bcrypt.hash('Testuser12345@', 10),
 			roleId: studentRole.id,
 		},
 	});
@@ -555,7 +558,6 @@ async function main() {
 				await prisma.attemp.create({
 					data: {
 						isCorrect,
-						number: i + 1,
 						userId: testUser.id,
 						exerciseId: exercise.id,
 						optionId: option.id,
