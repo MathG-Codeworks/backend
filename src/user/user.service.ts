@@ -51,7 +51,6 @@ export class UserService {
 		return this.prismaService.user.findUnique({
 			where: { id },
 			include: { role: true },
-			orderBy: { id: 'asc' },
 		});
 	}
 
