@@ -50,6 +50,15 @@ export class UserService {
 	async findById(id: number) {
 		return this.prismaService.user.findUnique({
 			where: { id },
+			include: { role: true },
+			orderBy: { id: 'asc' },
+		});
+	}
+
+	async findAll() {
+		return this.prismaService.user.findMany({
+			orderBy: { id: 'asc' },
+			include: { role: true },
 		});
 	}
 
