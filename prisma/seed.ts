@@ -426,6 +426,727 @@ async function main() {
 	});
 	console.log('Exercise created:', exercise10);
 
+	// Ejercicio 11: 9x - 3 = 24
+	const exercise11 = await prisma.exercise.create({
+		data: {
+			operation: '9x - 3 = 24',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -3 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '9x = 27', isCorrect: true },
+								{ result: '9x = 21', isCorrect: false },
+								{ result: '9x = 24', isCorrect: false },
+								{ result: '9x - 24 = 3', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 9',
+						options: {
+							create: [
+								{ result: 'x = 3', isCorrect: true },
+								{ result: 'x = 9', isCorrect: false },
+								{ result: 'x = 27', isCorrect: false },
+								{ result: 'x = 6', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise11);
+
+	// Ejercicio 12: 5x + 7 = 32
+	const exercise12 = await prisma.exercise.create({
+		data: {
+			operation: '5x + 7 = 32',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 7 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '5x = 25', isCorrect: true },
+								{ result: '5x = 39', isCorrect: false },
+								{ result: '5x = 32', isCorrect: false },
+								{ result: '5x + 32 = 7', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 5',
+						options: {
+							create: [
+								{ result: 'x = 5', isCorrect: true },
+								{ result: 'x = 25', isCorrect: false },
+								{ result: 'x = 7', isCorrect: false },
+								{ result: 'x = 10', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise12);
+
+	// Ejercicio 13: 6x - 6 = 18
+	const exercise13 = await prisma.exercise.create({
+		data: {
+			operation: '6x - 6 = 18',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -6 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '6x = 24', isCorrect: true },
+								{ result: '6x = 12', isCorrect: false },
+								{ result: '6x = 18', isCorrect: false },
+								{ result: '6x - 18 = 6', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 6',
+						options: {
+							create: [
+								{ result: 'x = 4', isCorrect: true },
+								{ result: 'x = 6', isCorrect: false },
+								{ result: 'x = 24', isCorrect: false },
+								{ result: 'x = 3', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise13);
+
+	// Ejercicio 14: 10x + 4 = 54
+	const exercise14 = await prisma.exercise.create({
+		data: {
+			operation: '10x + 4 = 54',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 4 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '10x = 50', isCorrect: true },
+								{ result: '10x = 58', isCorrect: false },
+								{ result: '10x = 54', isCorrect: false },
+								{ result: '10x + 54 = 4', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 10',
+						options: {
+							create: [
+								{ result: 'x = 5', isCorrect: true },
+								{ result: 'x = 50', isCorrect: false },
+								{ result: 'x = 10', isCorrect: false },
+								{ result: 'x = 4', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise14);
+
+	// Ejercicio 15: 3x - 9 = 12
+	const exercise15 = await prisma.exercise.create({
+		data: {
+			operation: '3x - 9 = 12',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -9 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '3x = 21', isCorrect: true },
+								{ result: '3x = 3', isCorrect: false },
+								{ result: '3x = 12', isCorrect: false },
+								{ result: '3x - 12 = 9', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 3',
+						options: {
+							create: [
+								{ result: 'x = 7', isCorrect: true },
+								{ result: 'x = 21', isCorrect: false },
+								{ result: 'x = 3', isCorrect: false },
+								{ result: 'x = 9', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise15);
+
+	// Ejercicio 16: 7x + 6 = 48
+	const exercise16 = await prisma.exercise.create({
+		data: {
+			operation: '7x + 6 = 48',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 6 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '7x = 42', isCorrect: true },
+								{ result: '7x = 54', isCorrect: false },
+								{ result: '7x = 48', isCorrect: false },
+								{ result: '7x + 48 = 6', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 7',
+						options: {
+							create: [
+								{ result: 'x = 6', isCorrect: true },
+								{ result: 'x = 42', isCorrect: false },
+								{ result: 'x = 7', isCorrect: false },
+								{ result: 'x = 8', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise16);
+
+	// Ejercicio 17: 4x - 8 = 16
+	const exercise17 = await prisma.exercise.create({
+		data: {
+			operation: '4x - 8 = 16',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -8 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '4x = 24', isCorrect: true },
+								{ result: '4x = 8', isCorrect: false },
+								{ result: '4x = 16', isCorrect: false },
+								{ result: '4x - 16 = 8', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 4',
+						options: {
+							create: [
+								{ result: 'x = 6', isCorrect: true },
+								{ result: 'x = 24', isCorrect: false },
+								{ result: 'x = 4', isCorrect: false },
+								{ result: 'x = 8', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise17);
+
+	// Ejercicio 18: 2x - 14 = 6
+	const exercise18 = await prisma.exercise.create({
+		data: {
+			operation: '2x - 14 = 6',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -14 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '2x = 20', isCorrect: true },
+								{ result: '2x = -8', isCorrect: false },
+								{ result: '2x = 6', isCorrect: false },
+								{ result: '2x - 6 = 14', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 2',
+						options: {
+							create: [
+								{ result: 'x = 10', isCorrect: true },
+								{ result: 'x = 20', isCorrect: false },
+								{ result: 'x = 2', isCorrect: false },
+								{ result: 'x = 7', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise18);
+
+	// Ejercicio 19: 11x + 2 = 35
+	const exercise19 = await prisma.exercise.create({
+		data: {
+			operation: '11x + 2 = 35',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 2 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '11x = 33', isCorrect: true },
+								{ result: '11x = 37', isCorrect: false },
+								{ result: '11x = 35', isCorrect: false },
+								{ result: '11x + 35 = 2', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 11',
+						options: {
+							create: [
+								{ result: 'x = 3', isCorrect: true },
+								{ result: 'x = 11', isCorrect: false },
+								{ result: 'x = 33', isCorrect: false },
+								{ result: 'x = 2', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise19);
+
+	// Ejercicio 20: 8x - 16 = 40
+	const exercise20 = await prisma.exercise.create({
+		data: {
+			operation: '8x - 16 = 40',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -16 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '8x = 56', isCorrect: true },
+								{ result: '8x = 24', isCorrect: false },
+								{ result: '8x = 40', isCorrect: false },
+								{ result: '8x - 40 = 16', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 8',
+						options: {
+							create: [
+								{ result: 'x = 7', isCorrect: true },
+								{ result: 'x = 56', isCorrect: false },
+								{ result: 'x = 8', isCorrect: false },
+								{ result: 'x = 16', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise20);
+
+	// Ejercicio 21: 12x + 3 = 51
+	const exercise21 = await prisma.exercise.create({
+		data: {
+			operation: '12x + 3 = 51',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 3 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '12x = 48', isCorrect: true },
+								{ result: '12x = 54', isCorrect: false },
+								{ result: '12x = 51', isCorrect: false },
+								{ result: '12x + 51 = 3', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 12',
+						options: {
+							create: [
+								{ result: 'x = 4', isCorrect: true },
+								{ result: 'x = 48', isCorrect: false },
+								{ result: 'x = 12', isCorrect: false },
+								{ result: 'x = 3', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise21);
+
+	// Ejercicio 22: 5x - 15 = 20
+	const exercise22 = await prisma.exercise.create({
+		data: {
+			operation: '5x - 15 = 20',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -15 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '5x = 35', isCorrect: true },
+								{ result: '5x = 5', isCorrect: false },
+								{ result: '5x = 20', isCorrect: false },
+								{ result: '5x - 20 = 15', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 5',
+						options: {
+							create: [
+								{ result: 'x = 7', isCorrect: true },
+								{ result: 'x = 35', isCorrect: false },
+								{ result: 'x = 5', isCorrect: false },
+								{ result: 'x = 15', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise22);
+
+	// Ejercicio 23: 9x + 9 = 63
+	const exercise23 = await prisma.exercise.create({
+		data: {
+			operation: '9x + 9 = 63',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 9 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '9x = 54', isCorrect: true },
+								{ result: '9x = 72', isCorrect: false },
+								{ result: '9x = 63', isCorrect: false },
+								{ result: '9x + 63 = 9', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 9',
+						options: {
+							create: [
+								{ result: 'x = 6', isCorrect: true },
+								{ result: 'x = 54', isCorrect: false },
+								{ result: 'x = 9', isCorrect: false },
+								{ result: 'x = 7', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise23);
+
+	// Ejercicio 24: 3x + 15 = 36
+	const exercise24 = await prisma.exercise.create({
+		data: {
+			operation: '3x + 15 = 36',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 15 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '3x = 21', isCorrect: true },
+								{ result: '3x = 51', isCorrect: false },
+								{ result: '3x = 36', isCorrect: false },
+								{ result: '3x + 36 = 15', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 3',
+						options: {
+							create: [
+								{ result: 'x = 7', isCorrect: true },
+								{ result: 'x = 21', isCorrect: false },
+								{ result: 'x = 3', isCorrect: false },
+								{ result: 'x = 15', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise24);
+
+	// Ejercicio 25: 6x - 18 = 12
+	const exercise25 = await prisma.exercise.create({
+		data: {
+			operation: '6x - 18 = 12',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -18 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '6x = 30', isCorrect: true },
+								{ result: '6x = -6', isCorrect: false },
+								{ result: '6x = 12', isCorrect: false },
+								{ result: '6x - 12 = 18', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 6',
+						options: {
+							create: [
+								{ result: 'x = 5', isCorrect: true },
+								{ result: 'x = 30', isCorrect: false },
+								{ result: 'x = 6', isCorrect: false },
+								{ result: 'x = 18', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise25);
+
+	// Ejercicio 26: 2x + 16 = 30
+	const exercise26 = await prisma.exercise.create({
+		data: {
+			operation: '2x + 16 = 30',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 16 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '2x = 14', isCorrect: true },
+								{ result: '2x = 46', isCorrect: false },
+								{ result: '2x = 30', isCorrect: false },
+								{ result: '2x + 30 = 16', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 2',
+						options: {
+							create: [
+								{ result: 'x = 7', isCorrect: true },
+								{ result: 'x = 14', isCorrect: false },
+								{ result: 'x = 2', isCorrect: false },
+								{ result: 'x = 16', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise26);
+
+	// Ejercicio 27: 10x - 20 = 60
+	const exercise27 = await prisma.exercise.create({
+		data: {
+			operation: '10x - 20 = 60',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -20 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '10x = 80', isCorrect: true },
+								{ result: '10x = 40', isCorrect: false },
+								{ result: '10x = 60', isCorrect: false },
+								{ result: '10x - 60 = 20', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 10',
+						options: {
+							create: [
+								{ result: 'x = 8', isCorrect: true },
+								{ result: 'x = 80', isCorrect: false },
+								{ result: 'x = 10', isCorrect: false },
+								{ result: 'x = 20', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise27);
+
+	// Ejercicio 28: 4x + 12 = 44
+	const exercise28 = await prisma.exercise.create({
+		data: {
+			operation: '4x + 12 = 44',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el 12 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '4x = 32', isCorrect: true },
+								{ result: '4x = 56', isCorrect: false },
+								{ result: '4x = 44', isCorrect: false },
+								{ result: '4x + 44 = 12', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 4',
+						options: {
+							create: [
+								{ result: 'x = 8', isCorrect: true },
+								{ result: 'x = 32', isCorrect: false },
+								{ result: 'x = 4', isCorrect: false },
+								{ result: 'x = 12', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise28);
+
+	// Ejercicio 29: 7x - 14 = 42
+	const exercise29 = await prisma.exercise.create({
+		data: {
+			operation: '7x - 14 = 42',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -14 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '7x = 56', isCorrect: true },
+								{ result: '7x = 28', isCorrect: false },
+								{ result: '7x = 42', isCorrect: false },
+								{ result: '7x - 42 = 14', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 7',
+						options: {
+							create: [
+								{ result: 'x = 8', isCorrect: true },
+								{ result: 'x = 56', isCorrect: false },
+								{ result: 'x = 7', isCorrect: false },
+								{ result: 'x = 14', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise29);
+
+	// Ejercicio 30: 11x - 11 = 44
+	const exercise30 = await prisma.exercise.create({
+		data: {
+			operation: '11x - 11 = 44',
+			description: 'Despeja la x en la ecuacion',
+			categoryId: category.id,
+			steps: {
+				create: [
+					{
+						description: 'Mueve el -11 al otro lado de la ecuacion',
+						options: {
+							create: [
+								{ result: '11x = 55', isCorrect: true },
+								{ result: '11x = 33', isCorrect: false },
+								{ result: '11x = 44', isCorrect: false },
+								{ result: '11x - 44 = 11', isCorrect: false },
+							],
+						},
+					},
+					{
+						description: 'Despeja la x dividiendo entre 11',
+						options: {
+							create: [
+								{ result: 'x = 5', isCorrect: true },
+								{ result: 'x = 55', isCorrect: false },
+								{ result: 'x = 11', isCorrect: false },
+								{ result: 'x = 4', isCorrect: false },
+							],
+						},
+					},
+				],
+			},
+		},
+	});
+	console.log('Exercise created:', exercise30);
+
+
 	// Crear usuario de prueba
 	const testUser = await prisma.user.create({
 		data: {
@@ -539,7 +1260,14 @@ async function main() {
 	console.log('User added to match');
 
 	// Crear attempts variados y aleatorios con diferentes fechas para probar agrupamiento por día
-	const exercises = [excercise, exercise2, exercise3, exercise4, exercise5, exercise6, exercise7, exercise8, exercise9, exercise10];
+	const exercises = [
+		excercise, exercise2, exercise3, exercise4, exercise5,
+		exercise6, exercise7, exercise8, exercise9, exercise10,
+		exercise11, exercise12, exercise13, exercise14, exercise15,
+		exercise16, exercise17, exercise18, exercise19, exercise20,
+		exercise21, exercise22, exercise23, exercise24, exercise25,
+		exercise26, exercise27, exercise28, exercise29, exercise30,
+	];
 	
 	// Función auxiliar para crear attemps con fecha específica
 	const createAttempsBatch = async (baseDate: Date, count: number, dayLabel: string) => {
