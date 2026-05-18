@@ -28,10 +28,23 @@ export class ExcerciseService {
 			return [];
 		}
 
+		const randomExercises = await this.prismaService.$queryRaw<{ id: number }[]>`
+			SELECT id
+			FROM "exercises"
+			ORDER BY RANDOM()
+			LIMIT ${num}
+		`;
+
+		if (randomExercises.length === 0) {
+			return [];
+		}
+
+		const exerciseIds = randomExercises.map(({ id }) => id);
 		const exercises = await this.prismaService.exercise.findMany({
-			take: num,
-			orderBy: {
-				createdAt: 'desc',
+			where: {
+				id: {
+					in: exerciseIds,
+				},
 			},
 			include: {
 				steps: {
@@ -44,7 +57,12 @@ export class ExcerciseService {
 			},
 		});
 
-		return plainToInstance(ResponseExcerciseDto, exercises, { excludeExtraneousValues: true });
+		const exerciseById = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+		const orderedExercises = exerciseIds
+			.map((id) => exerciseById.get(id))
+			.filter((exercise): exercise is (typeof exercises)[number] => Boolean(exercise));
+
+		return plainToInstance(ResponseExcerciseDto, orderedExercises, { excludeExtraneousValues: true });
 	}
 
 	findBrincaBrincaExercises(numberRounds: string) {
