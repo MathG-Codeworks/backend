@@ -16,13 +16,11 @@ export class RankingController {
 	constructor(private readonly rankingService: RankingService) { }
 
 	@Post()
-	@UseGuards(AuthGuard)
 	create(
-		@Request() req: ExpressRequest,
+		@Param('userId') userId: number,
 		@Body() createRankingDto: CreateRankingDto
 	) : Promise<ResponseRankingDto> {
-		const user = (req as any).user as AuthenticatedUser;
-		return this.rankingService.create(user.id, createRankingDto);
+		return this.rankingService.create(userId, createRankingDto);
 	}
 
 	// @Get()

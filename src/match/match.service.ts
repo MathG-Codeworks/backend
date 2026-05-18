@@ -13,7 +13,11 @@ export class MatchService {
 	) {}
 
 	async create(createMatchDto: CreateMatchDto): Promise<ResponseMatchDto> {
-		const minigames = await this.prismaService.minigame.findMany();
+		const minigame = await this.prismaService.minigame.findFirst();
+
+		if (!minigame) {
+			throw new BadRequestException(['No hay minijuegos disponibles']);
+		}
 
 		const match = await this.prismaService.match.create({
 			data: {
@@ -21,8 +25,8 @@ export class MatchService {
 				code: createMatchDto.code,
 				rounds: {
 					createMany: {
-						data: minigames.map(minigame => ({
-							minigameId: minigame.id,
+						data: Array(createMatchDto.rounds).fill(0).map(() => ({
+							minigameId: minigame?.id,
 						})),
 					},
 				},

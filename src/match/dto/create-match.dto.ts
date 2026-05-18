@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 import { IsMatchIdUnique } from '../validator/unique.validator';
 
 export class CreateMatchDto {
@@ -10,4 +10,8 @@ export class CreateMatchDto {
     @IsString({ message: 'El código del juego debe ser una cadena de texto' })
     @IsNotEmpty({ message: 'El código del juego es obligatorio' })
     code!: string;
+
+    @IsNotEmpty({ message: 'El número de rondas es obligatorio' })
+    @IsNumber({}, { message: 'El número de rondas debe ser un número' })
+    rounds!: number;
 }
