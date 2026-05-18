@@ -76,10 +76,10 @@ export class AttempService {
 		});
 	}
 
-	async create(userId: number, createAttempDto: CreateAttempDto): Promise<ResponseAttempDto> {
+	async create(createAttempDto: CreateAttempDto): Promise<ResponseAttempDto> {
 		const attemp = await this.prismaService.attemp.create({
 			data: {
-				userId: userId,
+				userId: createAttempDto.userId,
 				isCorrect: createAttempDto.isCorrect,
 				exerciseId: createAttempDto.exerciseId,
 				optionId: createAttempDto.optionId

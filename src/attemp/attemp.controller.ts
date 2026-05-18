@@ -31,13 +31,8 @@ export class AttempController {
 	}
 
 	@Post()
-	@UseGuards(AuthGuard)
-	create(
-		@Request() req: ExpressRequest,
-		@Body() createAttempDto: CreateAttempDto
-	) {
-		const user = (req as any).user as AuthenticatedUser;
-		return this.attempService.create(user.id, createAttempDto);
+	create(@Body() createAttempDto: CreateAttempDto) {
+		return this.attempService.create(createAttempDto);
 	}
 
 	// @Get()

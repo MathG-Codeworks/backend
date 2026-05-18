@@ -3,6 +3,11 @@ import { ExerciseExists } from "src/excercise/validator/exists.validator";
 import { OptionExists } from "src/option/validator/exists.validator";
 
 export class CreateAttempDto {
+
+    @IsInt()
+    @IsPositive()
+    userId!: number;
+
     @IsBoolean()
     isCorrect!: boolean;
 
