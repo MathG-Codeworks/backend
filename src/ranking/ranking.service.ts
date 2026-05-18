@@ -12,14 +12,34 @@ export class RankingService {
 	) {}
 
 	async create(createRankingDto: CreateRankingDto): Promise<ResponseRankingDto> {
-		const ranking = await this.prismaService.ranking.create({
-			data: {
-				userId: createRankingDto.userId,
-				roundId: createRankingDto.roundId,
-				score: createRankingDto.score,
-				position: createRankingDto.position,
-				accuracy: createRankingDto.accuracy
+		const data = {
+			userId: createRankingDto.userId,
+			roundId: createRankingDto.roundId,
+			score: createRankingDto.score,
+			position: createRankingDto.position,
+			accuracy: createRankingDto.accuracy
+		};
+
+		const ranking = await this.prismaService.$transaction(async (prisma) => {
+			const existingRanking = await prisma.ranking.findFirst({
+				where: {
+					userId: createRankingDto.userId,
+					roundId: createRankingDto.roundId
+				}
+			});
+
+			if (existingRanking) {
+				return prisma.ranking.update({
+					where: {
+						id: existingRanking.id
+					},
+					data
+				});
 			}
+
+			return prisma.ranking.create({
+				data
+			});
 		});
 
 		return plainToInstance(ResponseRankingDto, ranking);
