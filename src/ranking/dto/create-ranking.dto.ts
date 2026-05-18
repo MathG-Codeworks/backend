@@ -8,7 +8,6 @@ export class CreateRankingDto {
     userId!: number;
 
     @IsNumber()
-    @IsPositive()
     score!: number;
 
     @IsNumber()
@@ -17,11 +16,8 @@ export class CreateRankingDto {
     accuracy!: number;
 
     @IsInt()
-    @IsPositive()
     position!: number;
 
     @IsInt()
-    @IsPositive()
-    @RoundExists()
     roundId!: number;
 }
