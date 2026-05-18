@@ -11,10 +11,10 @@ export class RankingService {
 		private readonly prismaService: PrismaService,
 	) {}
 
-	async create(userId: number, createRankingDto: CreateRankingDto): Promise<ResponseRankingDto> {
+	async create(createRankingDto: CreateRankingDto): Promise<ResponseRankingDto> {
 		const ranking = await this.prismaService.ranking.create({
 			data: {
-				userId: userId,
+				userId: createRankingDto.userId,
 				roundId: createRankingDto.roundId,
 				score: createRankingDto.score,
 				position: createRankingDto.position,

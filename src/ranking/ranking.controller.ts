@@ -16,11 +16,8 @@ export class RankingController {
 	constructor(private readonly rankingService: RankingService) { }
 
 	@Post()
-	create(
-		@Param('userId') userId: number,
-		@Body() createRankingDto: CreateRankingDto
-	) : Promise<ResponseRankingDto> {
-		return this.rankingService.create(userId, createRankingDto);
+	create(@Body() createRankingDto: CreateRankingDto) : Promise<ResponseRankingDto> {
+		return this.rankingService.create(createRankingDto);
 	}
 
 	// @Get()
