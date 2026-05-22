@@ -4,6 +4,8 @@ import { UpdateMatchDto } from './dto/update-match.dto';
 import { PrismaService } from 'src/prisma.service';
 import { ResponseMatchDto } from './dto/response-match.dto';
 import { plainToInstance } from 'class-transformer';
+import { ResponseMatchSummaryDto } from './dto/response-match-summary.dto';
+import { ResponseMatchDetailDto } from './dto/response-match-detail.dto';
 
 @Injectable()
 export class MatchService {
@@ -69,12 +71,108 @@ export class MatchService {
 		return plainToInstance(ResponseMatchDto, match);
 	}
 
-	findAll() {
-		return `This action returns all match`;
+	async findAll(): Promise<ResponseMatchSummaryDto[]> {
+		const matches = await this.prismaService.match.findMany({
+			orderBy: { createdAt: 'desc' },
+			include: {
+				_count: {
+					select: {
+						rounds: true,
+						users: true,
+					},
+				},
+			},
+		});
+
+		return plainToInstance(ResponseMatchSummaryDto, matches.map((match) => ({
+			id: match.id,
+			code: match.code,
+			createdAt: match.createdAt,
+			updatedAt: match.updatedAt,
+			roundsCount: match._count.rounds,
+			playersCount: match._count.users,
+		})));
 	}
 
-	findOne(id: number) {
-		return `This action returns a #${id} match`;
+	async findOne(matchId: string): Promise<ResponseMatchDetailDto> {
+		const match = await this.prismaService.match.findUnique({
+			where: { id: matchId },
+			include: {
+				users: {
+					include: {
+						user: {
+							select: {
+								id: true,
+								username: true,
+							},
+						},
+					},
+				},
+				rounds: {
+					include: {
+						minigame: {
+							select: {
+								id: true,
+								name: true,
+								description: true,
+							},
+						},
+						rankings: {
+							orderBy: [
+								{ position: 'asc' },
+								{ score: 'desc' },
+							],
+							include: {
+								user: {
+									select: {
+										id: true,
+										username: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+
+		if (!match) {
+			return plainToInstance(ResponseMatchDetailDto, {
+				id: matchId,
+				code: '',
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				users: [],
+				rounds: [],
+			});
+		}
+
+		return plainToInstance(ResponseMatchDetailDto, {
+			id: match.id,
+			code: match.code,
+			createdAt: match.createdAt,
+			updatedAt: match.updatedAt,
+			users: match.users.map((userMatch) => ({
+				id: userMatch.user.id,
+				username: userMatch.user.username,
+			})),
+			rounds: match.rounds.map((round) => ({
+				id: round.id,
+				minigameId: round.minigameId,
+				minigameName: round.minigame.name,
+				minigameDescription: round.minigame.description,
+				createdAt: round.createdAt,
+				updatedAt: round.updatedAt,
+				rankings: round.rankings.map((ranking) => ({
+					id: ranking.id,
+					userId: ranking.userId,
+					username: ranking.user.username,
+					score: ranking.score,
+					accuracy: ranking.accuracy,
+					position: ranking.position,
+				})),
+			})),
+		});
 	}
 
 	update(id: number, updateMatchDto: UpdateMatchDto) {

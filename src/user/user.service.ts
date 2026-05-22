@@ -2,6 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Role } from 'src/common/enums/role.enum';
 import * as bcrypt from 'bcrypt';
+import { plainToInstance } from 'class-transformer';
+import { ResponseUserTotalDto } from './dto/response-user-total.dto';
 
 @Injectable()
 export class UserService {
@@ -59,6 +61,11 @@ export class UserService {
 			orderBy: { id: 'asc' },
 			include: { role: true },
 		});
+	}
+
+	async getTotal(): Promise<ResponseUserTotalDto> {
+		const total = await this.prismaService.user.count();
+		return plainToInstance(ResponseUserTotalDto, { total });
 	}
 
 	async validatePassword(password: string, hashedPassword: string): Promise<boolean> {

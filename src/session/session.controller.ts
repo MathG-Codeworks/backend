@@ -3,6 +3,8 @@ import { SessionService } from './session.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { ResponseSessionDto } from './dto/response-session.dto';
+import { ResponseSessionByDayDto } from './dto/response-session-by-day.dto';
+import { ResponseSessionTotalDto } from './dto/response-session-total.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import type { Request as ExpressRequest } from 'express';
 
@@ -20,6 +22,18 @@ export class SessionController {
 	getTotalTime(@Request() req: ExpressRequest) : Promise<number> {
 		const user = (req as any).user as AuthenticatedUser;
 		return this.sessionService.getTotalTime(user.id);
+	}
+
+	@UseGuards(AuthGuard)
+	@Get('by-day')
+	getByDay(): Promise<ResponseSessionByDayDto[]> {
+		return this.sessionService.getByDay();
+	}
+
+	@UseGuards(AuthGuard)
+	@Get('total')
+	getTotal(): Promise<ResponseSessionTotalDto> {
+		return this.sessionService.getTotal();
 	}
 
 	@UseGuards(AuthGuard)

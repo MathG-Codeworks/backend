@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { ResponseUserDto } from './dto/response-user.dto';
+import { ResponseUserTotalDto } from './dto/response-user-total.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -11,5 +12,10 @@ export class UserController {
 	async findAll(): Promise<ResponseUserDto[]> {
 		const users = await this.userService.findAll();
 		return plainToInstance(ResponseUserDto, users);
+	}
+
+	@Get('total')
+	getTotal(): Promise<ResponseUserTotalDto> {
+		return this.userService.getTotal();
 	}
 }

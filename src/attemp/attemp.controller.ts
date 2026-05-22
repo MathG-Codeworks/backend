@@ -6,6 +6,8 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import type { Request as ExpressRequest } from 'express';
 import { ResponseUserAttempsPresitionDto } from './dto/response-user-attemps-presition.dto';
 import { ResponseAttempByDayDto } from './dto/response-attemp-by-day.dto';
+import { ResponseTopPlayersDto } from './dto/response-top-players.dto';
+import { ResponseAttempExerciseSuccessDto } from './dto/response-attemp-exercise-success.dto';
 
 interface AuthenticatedUser {
   	id: number;
@@ -28,6 +30,24 @@ export class AttempController {
 	getByDay(@Request() req: ExpressRequest): Promise<ResponseAttempByDayDto[]> {
 		const user = (req as any).user as AuthenticatedUser;
 		return this.attempService.getByDay(user.id);
+	}
+
+	@UseGuards(AuthGuard)
+	@Get('total')
+	getTotals(): Promise<import('./dto/response-attemp-totals.dto').ResponseAttempTotalsDto> {
+		return this.attempService.getTotals();
+	}
+
+	@UseGuards(AuthGuard)
+	@Get('top-correct')
+	getTopCorrect(): Promise<ResponseTopPlayersDto[]> {
+		return this.attempService.getTopCorrect();
+	}
+
+	@UseGuards(AuthGuard)
+	@Get('exercise-success')
+	getExerciseSuccess(): Promise<ResponseAttempExerciseSuccessDto[]> {
+		return this.attempService.getSuccessByExercise();
 	}
 
 	@Post()

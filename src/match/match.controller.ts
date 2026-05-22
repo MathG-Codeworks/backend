@@ -3,9 +3,11 @@ import { MatchService } from './match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { ResponseMatchDto } from './dto/response-match.dto';
+import { ResponseMatchSummaryDto } from './dto/response-match-summary.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import type { Request as ExpressRequest } from 'express';
 import { ValidateMatchExistsPipe } from './validator/exists.validator';
+import { ResponseMatchDetailDto } from './dto/response-match-detail.dto';
 
 interface AuthenticatedUser {
   	id: number;
@@ -19,6 +21,18 @@ export class MatchController {
 	@Post()
 	create(@Body() createMatchDto: CreateMatchDto): Promise<ResponseMatchDto> {
 		return this.matchService.create(createMatchDto);
+	}
+
+	@UseGuards(AuthGuard)
+	@Get()
+	findAll(): Promise<ResponseMatchSummaryDto[]> {
+		return this.matchService.findAll();
+	}
+
+	@UseGuards(AuthGuard)
+	@Get(':id')
+	findOne(@Param('id', ValidateMatchExistsPipe) matchId: string): Promise<ResponseMatchDetailDto> {
+		return this.matchService.findOne(matchId);
 	}
 
 	@Post(':id/join')
